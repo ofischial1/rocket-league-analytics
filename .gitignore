@@ -1,0 +1,13 @@
+# Secrets
+.env
+
+# Virtual environment
+venv/
+
+# Raw data (large, regenerable from the API — not needed in the repo)
+raw_replays/
+processed_ids.txt
+
+# Python cache
+__pycache__/
+*.pyc
