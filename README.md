@@ -4,9 +4,7 @@
 
 ## Introduction
 
-Rocket League has no shortage of playstyle debates — is boost management more important than positioning? Do aggressive plays like demolitions actually win games, or are they just satisfying highlight-reel moments? Rather than relying on intuition or community folklore, I pulled real match data across multiple rank tiers to test some of these assumptions directly.
-
-This project set out to answer: **which team-level statistics actually correlate with winning, and does that relationship hold consistently across skill levels?**
+Gamers will do whatever it takes to win more games, but what all leads to these wins? In this project I set out to find the answers of which in-game statistics correlate the strongest with winning. I took a look at 3 stats: positioning, boost management, and demolitions (as well as goals scored as a control group). Let's take a look at some findings.
 
 ## Data & Methodology
 
@@ -22,33 +20,33 @@ To keep the comparisons consistent, every relationship below is reported as a Pe
 
 ### Offensive Output: The Baseline, As Expected
 
-As an internal check on the dataset and methodology, `goals` showed by far the strongest correlation with winning of any metric tested (r = 0.642, p < 0.0001) — unsurprising, since scoring more goals is close to a direct component of winning a match rather than an independent predictor. Shot volume (r = 0.386) and shooting accuracy (r = 0.389) showed similar, moderate positive relationships, confirming that offensive output remains the dominant factor in match outcomes even relative to positioning, boost management, or aggression-based statistics like demolitions. That this "obvious" relationship came through cleanly is a good sign the rest of the pipeline is sound.
+As an internal check on the dataset and methodology, `goals` showed by far the strongest correlation with winning of any metric tested (r = 0.642, p < 0.0001). This was unsurprising, since scoring more goals is the definition of a winning match rather than an independent predictor. Shot volume (r = 0.386) and shooting accuracy (r = 0.389) showed similar, moderate positive relationships, confirming that offensive output remains the dominant factor in match outcomes even relative to positioning, boost management, or aggression-based statistics like demolitions. That this *obvious* relationship came through cleanly is a good sign the rest of the pipeline is sound.
 
-[Insert plot: plots/plot_shooting_pct_by_win.png]
+![Shooting percentage by win/loss](plots/plot_shooting_pct_by_win.png)
 
 ### Positioning: The Strongest Non-Obvious Predictor
 
-Positioning showed the clearest relationship with winning of any metric tested that isn't a direct scoring statistic. Time spent in the offensive third correlated positively with winning (r = 0.182, p < 0.0001) — roughly three times the effect size seen for boost management or demolitions. Time in the defensive third showed a smaller, negative relationship (r = -0.083, p = 0.004), consistent with the same underlying pattern: winning teams spend proportionally more of the match applying offensive pressure rather than defending. While still a modest effect in absolute terms, it stands out as the most consistent predictor among the non-scoring stats examined here.
+To measure "positioning" I took a look at time spent on the defensive half vs the offensive half. Positioning showed the clearest relationship with winning of any metric tested that isn't a direct scoring statistic. Time spent in the offensive third correlated positively with winning (r = 0.182, p < 0.0001) — roughly three times the effect size seen for boost management or demolitions. Time in the defensive third showed a smaller, negative relationship (r = -0.083, p = 0.004), consistent with the same underlying pattern: winning teams spend proportionally more of the match applying offensive pressure rather than defending. While still a modest effect in absolute terms, it stands out as the most consistent predictor among the non-scoring stats examined here. This stat is not as obvious of an outcome, as it could have been the case that defensive strategies mixed with quick counter attacks were the most effective. It turns out that offense is the best offense.
 
-[Insert plot: plots/plot_time_offensive_third_by_win.png]
+![Time in offensive third by win/loss](plots/plot_time_offensive_third_by_win.png)
 
 ### Boost Management: Statistically Detectable, Practically Negligible
 
-Boost management showed no practically meaningful relationship with winning. Average boost held was nearly identical between winning and losing teams (r = 0.061); while this reached statistical significance due to the large sample size, an effect this small — well below the threshold typically considered even a "small" effect — has little practical importance. Time spent at zero boost showed no relationship at all (r = -0.010, not significant). This suggests that *how much* boost a team holds on average may simply be too coarse a signal — the *timing* of boost usage (having boost available at the moment it's needed) likely matters more than the raw average, which this analysis doesn't capture.
+To measure Boost management, I took a look at the teams average boost amount throughout the game as well as time spent with zero boost. There are a few other statistics that could be used instead such as total boost spent overall or boost collected, but average boost amount and time on zero boost is what I ultimately looked at. Boost management showed no practically meaningful relationship with winning. Average boost held was nearly identical between winning and losing teams (r = 0.061); while this reached statistical significance due to the large sample size, an effect this small (very small) has little practical importance. Time spent at zero boost showed no relationship at all (r = -0.010, not significant). This suggests that *how much* boost a team holds on average may simply be too broad of a predictor. The *timing* of boost usage (having boost available at the moment it's needed) likely matters more than the raw average, which this analysis doesn't capture.
 
-[Insert plot: plots/plot_avg_boost_by_win.png]
+![Average boost held by win/loss](plots/plot_avg_boost_by_win.png)
 
 ### Demolitions: Testing (and Complicating) the Obvious Hypothesis
 
-My original hypothesis was straightforward: teams that demolish opponents more often should win more often, since demos disrupt rotations and create scoring windows.
+My original hypothesis was straightforward: teams that demolish opponents more often should win more often, since demos disrupt rotations and create scoring opportunities.
 
-The data didn't support this — at least not simply. Across the full dataset, `demos_inflicted` showed no meaningful correlation with winning, and breaking the correlation out by rank tier didn't reveal a hidden pattern either; the relationship stayed weak and inconsistent across skill levels.
+The data didn't support this (at least not simply). Across the full dataset, `demos_inflicted` showed no meaningful correlation with winning, and breaking the correlation out by rank tier didn't reveal a hidden pattern either; the relationship stayed weak and inconsistent across skill levels.
 
 However, digging one level deeper surfaced a real nuance. When isolating teams with below-median shooting percentage (n=508), a small but statistically significant positive correlation emerged between demos inflicted and winning (r = 0.112, p < 0.05). In other words: for teams that aren't converting shots efficiently, doing more demos is weakly associated with winning more often — suggesting demolitions may act as a secondary path to disruption when a team can't win through clean shot conversion alone.
 
-This effect is modest — demos_inflicted explains only about 1% of the variance in match outcome (r²) within that subgroup — so it should be read as a minor contributing factor, not a primary driver of wins. It's also worth flagging that this result emerged from testing several subgroups, which increases the chance of a false positive (the multiple comparisons problem); I'd treat this as a promising lead rather than a settled fact without further validation on an independent sample.
+This effect is modest — demos_inflicted explains only about 1% of the variance in match outcome (r²) within that subgroup — so it should be read as a minor contributing factor, not a primary driver of wins. It's also worth flagging that this result emerged from testing several subgroups, which increases the chance of a false positive (the multiple comparisons problem). This seems to be more like a promising lead rather than a steadfast predictor.
 
-[Insert plot: plots/plot_demos_corr_by_rank.png and plots/plot_demos_shooting_interaction.png]
+![Demolitions vs. winning correlation by rank tier](plots/plot_demos_corr_by_rank.png)
 
 ## Limitations
 
@@ -65,7 +63,7 @@ Of everything tested, **offensive positioning was the strongest non-obvious pred
 
 - Incorporate possession and passing metrics if available, to get a fuller picture of playstyle beyond boost/positioning/demos.
 - Validate the demos/shooting-percentage subgroup finding on an independent, larger sample.
-- Extend the analysis with a logistic regression or random forest model to see which features matter most *jointly*, rather than one at a time — and to test whether boost timing (rather than average level) shows a relationship the current metrics miss.
+- Explore more statistics such as boost spent and average speed.
 
 ---
 *Full code, raw dataset, and analysis scripts: [GitHub repo](https://github.com/ofischial1/rocket-league-analytics)*
