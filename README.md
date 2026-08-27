@@ -66,4 +66,5 @@ Of everything tested, **offensive positioning was the strongest non-obvious pred
 - Explore more statistics such as boost spent and average speed.
 
 ---
+*Built with assistance of AI*
 *Full code, raw dataset, and analysis scripts: [GitHub repo](https://github.com/ofischial1/rocket-league-analytics)*
